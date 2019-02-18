@@ -1,11 +1,21 @@
+# -*- coding:utf-8 -*-
 import pandas as pd, numpy as np
 from tqdm import tqdm
+import pdb
+
+#Jpdb.set_trace()
+f_w = open('../data/train_set.csv1', 'w')
+for idx,line in enumerate(open('../data/train_set.csv')):
+    if idx !=0:
+        if len(line.split(',')) < 4:
+            continue
+    f_w.write(line)
 
 column='word_seg'
-labels=pd.read_csv('../data/train_set.csv',usecols=['class']).values
+labels=pd.read_csv('../data/train_set.csv1',usecols=['class']).values
 labels=labels.reshape(-1)
 np.save('../data/labels.npy',labels)
-train = pd.read_csv('../data/train_set.csv',usecols=[column])
+train = pd.read_csv('../data/train_set.csv1',usecols=[column])
 test=pd.read_csv('../data/test_set.csv',usecols=[column])
 alldoc=np.concatenate((train[column].values,test[column].values),axis=0)
 
