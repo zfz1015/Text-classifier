@@ -3,12 +3,21 @@ import pandas as pd, numpy as np
 from tqdm import tqdm
 import pdb
 
-#Jpdb.set_trace()
+#pdb.set_trace()
 f_w = open('../data/train_set.csv1', 'w')
 for idx,line in enumerate(open('../data/train_set.csv')):
     if idx !=0:
         if len(line.split(',')) < 4:
             continue
+
+    f_w.write(line)
+
+f_w = open('../data/test_set.csv1', 'w')
+for idx,line in enumerate(open('../data/test_set.csv')):
+    if idx !=0:
+        if len(line.split(',')) < 3:
+            continue
+
     f_w.write(line)
 
 column='word_seg'
@@ -16,13 +25,14 @@ labels=pd.read_csv('../data/train_set.csv1',usecols=['class']).values
 labels=labels.reshape(-1)
 np.save('../data/labels.npy',labels)
 train = pd.read_csv('../data/train_set.csv1',usecols=[column])
-test=pd.read_csv('../data/test_set.csv',usecols=[column])
+test=pd.read_csv('../data/test_set.csv1',usecols=[column])
 alldoc=np.concatenate((train[column].values,test[column].values),axis=0)
 
 import collections
 def build_vocab(data):
     ls=collections.Counter()
     for row in tqdm(range(data.shape[0])):
+        #pdb.set_trace()
         ls.update(collections.Counter(data[row].split()))
     return ls
 import operator
@@ -64,10 +74,10 @@ import subprocess
 subprocess.call('./glove.sh',shell=True)
 
 with open('glove/vectors.txt', 'r+') as f:
-    content = f.read()        
+    content = f.read()
     f.seek(0, 0)
     f.write('679242 100\n'+content)
-    
+
 from gensim.models import Word2Vec
 import gensim
 model = gensim.models.KeyedVectors.load_word2vec_format('glove/vectors.txt', binary=False)
